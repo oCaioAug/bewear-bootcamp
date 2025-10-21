@@ -116,7 +116,7 @@ const SignInForm = () => {
 
               <FormField
                 control={form.control}
-                name="email"
+                name="password"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Senha</FormLabel>
