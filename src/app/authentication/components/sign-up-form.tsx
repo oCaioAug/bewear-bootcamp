@@ -80,7 +80,7 @@ const SignUpForm = () => {
             ) {
               toast.error("Usuário já existe.");
 
-              form.setError("email", {
+              return form.setError("email", {
                 message: "E-mail já está cadastrado.",
               });
             }
