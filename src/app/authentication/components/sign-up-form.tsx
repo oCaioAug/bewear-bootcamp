@@ -1,7 +1,9 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 import z from "zod";
 
 import { Button } from "@/components/ui/button";
@@ -22,6 +24,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { authClient } from "@/lib/auth-client";
 
 const formSchema = z
   .object({
@@ -34,16 +37,21 @@ const formSchema = z
       .string("Confirmação de senha inválida.")
       .min(8, "Confirmação de senha deve ter pelo menos 8 caracteres."),
   })
-  .refine((data) => {
-    return data.password === data.passwordValidation;
-  }, {
-    error: "As senhas não coincidem.",
-    path: ["passwordValidation"],
-  });
+  .refine(
+    (data) => {
+      return data.password === data.passwordValidation;
+    },
+    {
+      error: "As senhas não coincidem.",
+      path: ["passwordValidation"],
+    },
+  );
 
 type FormValues = z.infer<typeof formSchema>;
 
 const SignUpForm = () => {
+  const router = useRouter();
+
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -54,8 +62,36 @@ const SignUpForm = () => {
     },
   });
 
-  function onSubmit(values: FormValues) {
-    console.log(values);
+  async function onSubmit(values: FormValues) {
+    try {
+      console.info(values);
+
+      await authClient.signUp.email({
+        name: values.name,
+        email: values.email,
+        password: values.password,
+        fetchOptions: {
+          onSuccess: () => {
+            router.push("/");
+          },
+          onError: (error) => {
+            if (
+              error.error.code === authClient.$ERROR_CODES.USER_ALREADY_EXISTS
+            ) {
+              toast.error("Usuário já existe.");
+
+              form.setError("email", {
+                message: "E-mail já está cadastrado.",
+              });
+            }
+
+            toast.error(error.error.message);
+          },
+        },
+      });
+    } catch (error) {
+      console.log("Error submitting form:", error);
+    }
   }
 
   return (
@@ -134,7 +170,7 @@ const SignUpForm = () => {
               />
             </CardContent>
             <CardFooter>
-              <Button type="submit">Entrar</Button>
+              <Button type="submit">Criar Conta</Button>
             </CardFooter>
           </form>
         </Form>
