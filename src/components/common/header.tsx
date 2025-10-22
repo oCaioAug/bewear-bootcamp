@@ -39,7 +39,7 @@ const Header = () => {
             <div className="px-5">
               {session?.user ? (
                 <>
-                  <div className="justify-betweeen flex space-y-6">
+                  <div className="justify-betweeen flex space-y-6 space-x-2">
                     <div className="flex items-center gap-3">
                       <Avatar>
                         <AvatarImage
@@ -51,18 +51,24 @@ const Header = () => {
                         </AvatarFallback>
                       </Avatar>
 
-                      <div className="">
-                        <h3 className="font-semibold">{session?.user?.name}</h3>
+                      <div>
+                        <h3 className="font-semibold text-nowrap">
+                          {session?.user?.name}
+                        </h3>
                         <span className="text-muted-foreground block text-xs">
                           {session?.user?.email}
                         </span>
                       </div>
                     </div>
-                  </div>
 
-                  <Button variant="outline" size="icon" onClick={() => authClient.signOut()}>
-                    <LogOutIcon />
-                  </Button>
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      onClick={() => authClient.signOut()}
+                    >
+                      <LogOutIcon />
+                    </Button>
+                  </div>
                 </>
               ) : (
                 <div className="flex items-center justify-between">
