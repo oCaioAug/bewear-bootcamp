@@ -26,7 +26,7 @@ export const userTable = pgTable("user", {
 
 export const userRelations = relations(userTable, ({ many, one }) => ({
   shippingAddresses: many(shippingAddressTable),
-  carts: one(cartTable, {
+  cart: one(cartTable, {
     fields: [userTable.id],
     references: [cartTable.userId],
   }),
@@ -49,7 +49,7 @@ export const accountTable = pgTable("account", {
   id: text("id").primaryKey(),
   accountId: text("account_id").notNull(),
   providerId: text("provider_id").notNull(),
-  userId: text("user_id") // Alteração
+  userId: text("user_id")
     .notNull()
     .references(() => userTable.id, { onDelete: "cascade" }),
   accessToken: text("access_token"),
@@ -83,11 +83,9 @@ export const categoryTable = pgTable("category", {
   createdAt: timestamp("created_at").notNull().defaultNow(),
 });
 
-export const categoryRelations = relations(categoryTable, ({ many }) => {
-  return {
-    products: many(productTable),
-  };
-});
+export const categoryRelations = relations(categoryTable, ({ many }) => ({
+  products: many(productTable),
+}));
 
 export const productTable = pgTable("product", {
   id: uuid().primaryKey().defaultRandom(),
@@ -100,15 +98,13 @@ export const productTable = pgTable("product", {
   createdAt: timestamp("created_at").notNull().defaultNow(),
 });
 
-export const productRelations = relations(productTable, ({ one, many }) => {
-  return {
-    category: one(categoryTable, {
-      fields: [productTable.categoryId],
-      references: [categoryTable.id],
-    }),
-    variants: many(productVariantTable),
-  };
-});
+export const productRelations = relations(productTable, ({ one, many }) => ({
+  category: one(categoryTable, {
+    fields: [productTable.categoryId],
+    references: [categoryTable.id],
+  }),
+  variants: many(productVariantTable),
+}));
 
 export const productVariantTable = pgTable("product_variant", {
   id: uuid().primaryKey().defaultRandom(),
@@ -125,14 +121,12 @@ export const productVariantTable = pgTable("product_variant", {
 
 export const productVariantRelations = relations(
   productVariantTable,
-  ({ one }) => {
-    return {
-      products: one(productTable, {
-        fields: [productVariantTable.productId],
-        references: [productTable.id],
-      }),
-    };
-  },
+  ({ one }) => ({
+    product: one(productTable, {
+      fields: [productVariantTable.productId],
+      references: [productTable.id],
+    }),
+  }),
 );
 
 export const shippingAddressTable = pgTable("shipping_address", {
@@ -140,18 +134,18 @@ export const shippingAddressTable = pgTable("shipping_address", {
   userId: text("user_id")
     .notNull()
     .references(() => userTable.id, { onDelete: "cascade" }),
-  recipientName: text("recipient_name").notNull(),
-  street: text("street").notNull(),
-  number: text("number").notNull(),
-  complement: text("complement"),
-  city: text("city").notNull(),
-  state: text("state").notNull(),
-  neighborhood: text("neighborhood").notNull(),
-  zipCode: text("zip_code").notNull(),
-  country: text("country").notNull(),
-  phone: text("phone").notNull(),
-  email: text("email").notNull(),
-  cpfOrCnpj: text("cpf_or_cnpj").notNull(),
+  recipientName: text('recipient_name').notNull(),
+  street: text('street').notNull(),
+  number: text('number').notNull(),
+  complement: text('complement'),
+  city: text('city').notNull(),
+  state: text('state').notNull(),
+  neighborhood: text('neighborhood').notNull(),
+  zipCode: text('zip_code').notNull(),
+  country: text('country').notNull(),
+  phone: text('phone').notNull(),
+  email: text('email').notNull(),
+  cpfOrCnpj: text('cpf_or_cnpj').notNull(),
   createdAt: timestamp("created_at").notNull().defaultNow(),
 });
 
@@ -174,11 +168,11 @@ export const cartTable = pgTable("cart", {
   userId: text("user_id")
     .notNull()
     .references(() => userTable.id, { onDelete: "cascade" }),
-  shippingAddressId: uuid("shipping_address")
-    .notNull()
-    .references(() => shippingAddressTable.id, { onDelete: "set null" }),
+  shippingAddressId: uuid("shipping_address_id").references(
+    () => shippingAddressTable.id,
+    { onDelete: "set null" },
+  ),
   createdAt: timestamp("created_at").notNull().defaultNow(),
-  updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });
 
 export const cartRelations = relations(cartTable, ({ one, many }) => ({
@@ -189,8 +183,8 @@ export const cartRelations = relations(cartTable, ({ one, many }) => ({
   shippingAddress: one(shippingAddressTable, {
     fields: [cartTable.shippingAddressId],
     references: [shippingAddressTable.id],
-    }),
-    items: many(cartItemTable),
+  }),
+  items: many(cartItemTable),
 }));
 
 export const cartItemTable = pgTable("cart_item", {
@@ -203,7 +197,6 @@ export const cartItemTable = pgTable("cart_item", {
     .references(() => productVariantTable.id, { onDelete: "cascade" }),
   quantity: integer("quantity").notNull().default(1),
   createdAt: timestamp("created_at").notNull().defaultNow(),
-  updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });
 
 export const cartItemRelations = relations(cartItemTable, ({ one }) => ({

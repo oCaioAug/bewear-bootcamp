@@ -5,28 +5,23 @@ import { notFound } from "next/navigation";
 import Footer from "@/components/common/footer";
 import Header from "@/components/common/header";
 import ProductList from "@/components/common/products-list";
-import { Button } from "@/components/ui/button";
 import { db } from "@/db";
 import { productTable, productVariantTable } from "@/db/schema";
 import { formatCentsToBRL } from "@/helpers/money";
 
-import QuantitySelector from "./components/quantity-selector";
+import ProductActions from "./components/product-actions";
 import VariantSelector from "./components/variant-selector";
 
 interface ProductVariantPageProps {
   params: Promise<{ slug: string }>;
-  searchParams: Promise<{ [key: string]: string | string[] }>;
 }
 
-const ProductVariantPage = async ({
-  params,
-  searchParams,
-}: ProductVariantPageProps) => {
+const ProductVariantPage = async ({ params }: ProductVariantPageProps) => {
   const { slug } = await params;
   const productVariant = await db.query.productVariantTable.findFirst({
     where: eq(productVariantTable.slug, slug),
     with: {
-      products: {
+      product: {
         with: {
           variants: true,
         },
@@ -39,7 +34,7 @@ const ProductVariantPage = async ({
   }
 
   const likelyProducts = await db.query.productTable.findMany({
-    where: eq(productTable.categoryId, productVariant.products.categoryId),
+    where: eq(productTable.categoryId, productVariant.product.categoryId),
     with: {
       variants: true,
     },
@@ -67,14 +62,14 @@ const ProductVariantPage = async ({
           {/* Variantes */}
           <VariantSelector
             selectedVariantSlug={productVariant.slug}
-            variants={productVariant.products.variants}
+            variants={productVariant.product.variants}
           />
         </div>
 
         <div className="px-5">
           {/* Descricao */}
           <h2 className="text-lg font-semibold">
-            {productVariant.products.name}
+            {productVariant.product.name}
           </h2>
           <h3 className="text-muted-foreground text-sm">
             {productVariant.name}
@@ -84,27 +79,10 @@ const ProductVariantPage = async ({
           </h3>
         </div>
 
-        <div className="px-5">
-          {/* Quantidade */}
-          <QuantitySelector />
-        </div>
-
-        <div className="flex flex-col space-y-4 px-5">
-          {/* Botoes */}
-          <Button
-            className="rounded-full border font-semibold"
-            size="lg"
-            variant="ghost"
-          >
-            Adicionar ao Carrinho
-          </Button>
-          <Button className="rounded-full font-semibold" size="lg">
-            Comprar Agora
-          </Button>
-        </div>
+        <ProductActions productVariantId={productVariant.id} />
 
         <div className="px-5">
-          <p className="text-sm">{productVariant.products.description}</p>
+          <p className="text-sm">{productVariant.product.description}</p>
         </div>
 
         <ProductList title="Talvez você goste" products={likelyProducts} />
