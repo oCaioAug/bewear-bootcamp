@@ -21,6 +21,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useCreateShippingAddress } from "@/hooks/mutations/use-create-shipping-address";
+import { useUserShippingAddresses } from "@/hooks/queries/use-user-shipping-addresses";
 
 const addressFormSchema = z.object({
   email: z.email("Email inválido."),
@@ -41,6 +42,7 @@ type AddressFormValues = z.infer<typeof addressFormSchema>;
 const Addresses = () => {
   const [selectedAddress, setSelectedAddress] = useState<string | null>(null);
   const createShippingAddressMutation = useCreateShippingAddress();
+  const { data: addresses, isLoading } = useUserShippingAddresses();
 
   const form = useForm<AddressFormValues>({
     resolver: zodResolver(addressFormSchema),
@@ -79,19 +81,52 @@ const Addresses = () => {
         </CardHeader>
 
         <CardContent>
-          <RadioGroup
-            value={selectedAddress}
-            onValueChange={setSelectedAddress}
-          >
-            <Card>
-              <CardContent>
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="add_new" id="add_new" />
-                  <Label htmlFor="add_new">Adicionar novo endereço</Label>
-                </div>
-              </CardContent>
-            </Card>
-          </RadioGroup>
+          {isLoading ? (
+            <div className="flex items-center justify-center py-8">
+              <div className="text-sm text-gray-500">
+                Carregando endereços...
+              </div>
+            </div>
+          ) : (
+            <RadioGroup
+              value={selectedAddress}
+              onValueChange={setSelectedAddress}
+            >
+              {/* Renderizar endereços existentes */}
+              {addresses?.map((address) => (
+                <Card key={address.id}>
+                  <CardContent>
+                    <div className="flex items-center space-x-2">
+                      <RadioGroupItem value={address.id} id={address.id} />
+                      <Label
+                        htmlFor={address.id}
+                        className="flex-1 cursor-pointer"
+                      >
+                        <div className="text-sm">
+                          {address.recipientName} - {address.street},{" "}
+                          {address.number}
+                          {address.complement &&
+                            `, ${address.complement}`} - {address.neighborhood},{" "}
+                          {address.city} - {address.state} - CEP:{" "}
+                          {address.zipCode}
+                        </div>
+                      </Label>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+
+              {/* Botão para adicionar novo endereço */}
+              <Card>
+                <CardContent>
+                  <div className="flex items-center space-x-2">
+                    <RadioGroupItem value="add_new" id="add_new" />
+                    <Label htmlFor="add_new">Adicionar novo endereço</Label>
+                  </div>
+                </CardContent>
+              </Card>
+            </RadioGroup>
+          )}
 
           {selectedAddress === "add_new" && (
             <Card className="mt-4">
@@ -302,12 +337,14 @@ const Addresses = () => {
                       />
                     </div>
 
-                    <Button 
-                      type="submit" 
-                      className="w-full" 
+                    <Button
+                      type="submit"
+                      className="w-full"
                       disabled={createShippingAddressMutation.isPending}
                     >
-                      {createShippingAddressMutation.isPending ? "Salvando..." : "Salvar endereço"}
+                      {createShippingAddressMutation.isPending
+                        ? "Salvando..."
+                        : "Salvar endereço"}
                     </Button>
                   </form>
                 </Form>
