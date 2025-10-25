@@ -1,6 +1,7 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { PatternFormat } from "react-number-format";
@@ -25,6 +26,8 @@ import { shippingAddressTable } from "@/db/schema";
 import { useCreateShippingAddress } from "@/hooks/mutations/use-create-shipping-address";
 import { useUpdateCartShippingAddress } from "@/hooks/mutations/use-update-cart-shipping-address";
 import { useUserAddresses } from "@/hooks/queries/use-user-addresses";
+
+import { formatAddress } from "../../helpers/address";
 
 const addressFormSchema = z.object({
   email: z.email("Email inválido."),
@@ -51,6 +54,8 @@ const Addresses = ({
   shippingAddresses,
   defaultShippingAddressId,
 }: AddressesProps) => {
+  const router = useRouter();
+
   const [selectedAddress, setSelectedAddress] = useState<string | null>(
     defaultShippingAddressId || null,
   );
@@ -90,7 +95,9 @@ const Addresses = ({
 
       form.reset();
       setSelectedAddress(null);
-      toast.success("Endereço selecionado para entrega!", {position: 'top-center'});
+      toast.success("Endereço selecionado para entrega!", {
+        position: "top-center",
+      });
     } catch (error) {
       toast.error("Erro ao criar endereço. Tente novamente.");
       console.error("Error creating address:", error);
@@ -107,8 +114,11 @@ const Addresses = ({
       await updateCartShippingAddressMutation.mutateAsync({
         shippingAddressId: selectedAddress,
       });
-      toast.success("Endereço vinculado ao carrinho!", {position: 'top-center'});
-      // Aqui você pode redirecionar para a próxima etapa do checkout
+      toast.success("Endereço selecionado para entrega!", {
+        position: "top-center",
+      });
+
+      router.push("/cart/confirmation");
     } catch (error) {
       toast.error("Erro ao vincular endereço. Tente novamente.");
       console.error("Error updating cart:", error);
@@ -144,14 +154,7 @@ const Addresses = ({
                         htmlFor={address.id}
                         className="flex-1 cursor-pointer"
                       >
-                        <div className="text-sm">
-                          {address.recipientName} - {address.street},{" "}
-                          {address.number}
-                          {address.complement &&
-                            `, ${address.complement}`} - {address.neighborhood},{" "}
-                          {address.city} - {address.state} - CEP:{" "}
-                          {address.zipCode}
-                        </div>
+                        <div className="text-sm">{formatAddress(address)}</div>
                       </Label>
                     </div>
                   </CardContent>
