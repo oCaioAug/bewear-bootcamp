@@ -3,7 +3,7 @@
 import { headers } from "next/headers";
 
 import { db } from "@/db";
-import { auth } from "@/lib/auth";
+import {auth} from "@/lib/auth";
 
 export const getUserShippingAddresses = async () => {
   const session = await auth.api.getSession({

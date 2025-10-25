@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 import { createShippingAddress } from "@/actions/create-shipping-address";
-import { getShippingAddressesQueryKey } from "@/hooks/queries/use-user-shipping-addresses";
+import { getUserAddressesQueryKey } from "@/hooks/queries/use-user-addresses";
 
 export const getCreateShippingAddressMutationKey = () => [
   "create-shipping-address",
@@ -15,7 +15,7 @@ export const useCreateShippingAddress = () => {
     mutationFn: createShippingAddress,
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: getShippingAddressesQueryKey(),
+        queryKey: getUserAddressesQueryKey(),
       });
     },
   });
