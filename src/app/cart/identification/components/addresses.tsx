@@ -90,7 +90,7 @@ const Addresses = ({
 
       form.reset();
       setSelectedAddress(null);
-      toast.success("Endereço vinculado ao carrinho!");
+      toast.success("Endereço selecionado para entrega!", {position: 'top-center'});
     } catch (error) {
       toast.error("Erro ao criar endereço. Tente novamente.");
       console.error("Error creating address:", error);
@@ -107,7 +107,7 @@ const Addresses = ({
       await updateCartShippingAddressMutation.mutateAsync({
         shippingAddressId: selectedAddress,
       });
-      toast.success("Endereço vinculado ao carrinho!");
+      toast.success("Endereço vinculado ao carrinho!", {position: 'top-center'});
       // Aqui você pode redirecionar para a próxima etapa do checkout
     } catch (error) {
       toast.error("Erro ao vincular endereço. Tente novamente.");

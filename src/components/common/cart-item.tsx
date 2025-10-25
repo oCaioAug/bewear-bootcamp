@@ -75,7 +75,7 @@ const CartItem = ({
   return (
     <>
       <div className="flex items-center justify-between">
-        <div className="items-center-gap-4 flex">
+        <div className="flex items-center gap-4">
           <Image
             src={productVariantImageUrl}
             alt={productVariantName}
