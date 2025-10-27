@@ -34,6 +34,8 @@ export const finishOrder = async () => {
     },
   });
 
+  let orderId: string | undefined;
+
   await db.transaction(async (tx) => {
     if (!cart) {
       throw new Error("Cart not found");
@@ -72,6 +74,8 @@ export const finishOrder = async () => {
       throw new Error("Failed to create order");
     }
 
+    orderId = order.id;
+
     const orderItemsPayload: Array<typeof orderItemTable.$inferInsert> =
       cart.items.map((item) => ({
         orderId: order.id,
@@ -85,4 +89,9 @@ export const finishOrder = async () => {
     await tx.delete(cartItemTable).where(eq(cartItemTable.cartId, cart.id));
   });
 
+  if (!orderId) {
+    throw new Error("Failed to finish order");
+  }
+
+  return { orderId };
 };

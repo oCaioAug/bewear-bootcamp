@@ -1,10 +1,12 @@
 "use client";
 
+import { loadStripe } from "@stripe/stripe-js";
 import { Loader2 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
 
+import { createCheckoutSession } from "@/actions/create-checkout-session";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -18,8 +20,31 @@ import { useFinishOrder } from "@/hooks/mutations/use-finish-order";
 const FinishOrderButton = () => {
   const [successDialogIsOpen, setSuccessDialogIsOpen] = useState(false);
   const finishOrderMutation = useFinishOrder();
-  const handleFinishOrder = () => {
-    finishOrderMutation.mutate();
+  const handleFinishOrder = async () => {
+    if (!process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY) {
+      throw new Error("Stripe publishable key is not defined");
+    }
+
+    const { orderId } = await finishOrderMutation.mutateAsync();
+    const checkoutSession = await createCheckoutSession({
+      orderId,
+    });
+    const stripe = await loadStripe(
+      process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY,
+    );
+
+    if (!stripe) {
+      throw new Error("Stripe.js failed to load");
+    }
+
+    const { error } = await stripe.redirectToCheckout({
+      sessionId: checkoutSession.id,
+    });
+
+    if (error) {
+      throw new Error(error.message);
+    }
+
     setSuccessDialogIsOpen(true);
   };
 
@@ -58,7 +83,12 @@ const FinishOrderButton = () => {
               Ver meus pedidos
             </Button>
 
-            <Button className="rounder-full" size="lg" variant="outline" asChild>
+            <Button
+              className="rounder-full"
+              size="lg"
+              variant="outline"
+              asChild
+            >
               <Link href="/">Voltar à loja</Link>
             </Button>
           </DialogFooter>
