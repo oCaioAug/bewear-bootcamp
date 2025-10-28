@@ -35,8 +35,8 @@ const SuccessPage = () => {
           </DialogDescription>
 
           <DialogFooter>
-            <Button className="rounder-full" size="lg">
-              Ver meus pedidos
+            <Button className="rounder-full" size="lg" asChild>
+              <Link href="/my-orders">Ver meus pedidos</Link>
             </Button>
 
             <Button
