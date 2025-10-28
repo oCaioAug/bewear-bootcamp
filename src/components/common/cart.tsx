@@ -19,7 +19,7 @@ import {
 import CartItem from "./cart-item";
 
 const Cart = () => {
-  const { data: cart, isPending: cartIsLoading } = useCart();
+  const { data: cart} = useCart();
 
   return (
     <Sheet>
