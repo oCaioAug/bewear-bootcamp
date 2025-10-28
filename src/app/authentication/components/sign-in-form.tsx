@@ -47,7 +47,6 @@ const SignInForm = () => {
   });
 
   async function onSubmit(values: FormValues) {
-    console.log(values);
 
     await authClient.signIn.email({
       email: values.email,

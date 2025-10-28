@@ -23,7 +23,6 @@ export default async function Home() {
     },
   });
   const categories = await db.query.categoryTable.findMany();
-  console.log(products);
 
   return (
     <>

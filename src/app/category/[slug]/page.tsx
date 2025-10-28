@@ -17,8 +17,6 @@ const CategoryPage = async ({ params }: CategoryPageProps) => {
     where: eq(categoryTable.slug, slug),
   });
 
-  console.log(category)
-
   if (!category) {
     return notFound();
   }
