@@ -2,7 +2,7 @@
 
 import { headers } from "next/headers";
 
-import { db } from "@/db";
+import { getUserShippingAddresses } from "@/data/shipping-address/get";
 import { auth } from "@/lib/auth";
 
 export const getUserAddresses = async () => {
@@ -14,10 +14,7 @@ export const getUserAddresses = async () => {
     throw new Error("Unauthorized");
   }
 
-  const addresses = await db.query.shippingAddressTable.findMany({
-    where: (address, { eq }) => eq(address.userId, session.user.id),
-    orderBy: (address, { desc }) => [desc(address.createdAt)],
-  });
+  const addresses = await getUserShippingAddresses(session.user.id);
 
   return addresses;
 };

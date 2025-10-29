@@ -1,14 +1,9 @@
 "use server";
 
-import { eq } from "drizzle-orm";
 import { headers } from "next/headers";
 import Stripe from "stripe";
 
-import { db } from "@/db";
-import {
-  orderItemTable,
-  orderTable,
-} from "@/db/schema";
+import { getOrderById, getOrderItems } from "@/data/orders/get";
 import { auth } from "@/lib/auth";
 
 import {
@@ -29,21 +24,14 @@ export const createCheckoutSession = async (
     throw new Error("Unauthorized");
   }
   const { orderId } = createCheckoutSessionSchema.parse(data);
-  const order = await db.query.orderTable.findFirst({
-    where: eq(orderTable.id, orderId),
-  });
+  const order = await getOrderById(orderId);
   if (!order) {
     throw new Error("Order not found");
   }
   if (order.userId !== session.user.id) {
     throw new Error("Unauthorized");
   }
-  const orderItems = await db.query.orderItemTable.findMany({
-    where: eq(orderItemTable.orderId, orderId),
-    with: {
-      productVariant: { with: { product: true } },
-    },
-  });
+  const orderItems = await getOrderItems(orderId);
   const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
   const checkoutSession = await stripe.checkout.sessions.create({
     payment_method_types: ["card"],

@@ -3,6 +3,7 @@
 import { eq } from "drizzle-orm";
 import { headers } from "next/headers";
 
+import { getUserCart } from "@/data/cart/get";
 import { db } from "@/db";
 import {
   cartItemTable,
@@ -10,6 +11,7 @@ import {
   orderItemTable,
   orderTable,
 } from "@/db/schema";
+import { calculateCartTotalInCents } from "@/helpers/cart";
 import { auth } from "@/lib/auth";
 
 export const finishOrder = async () => {
@@ -21,17 +23,7 @@ export const finishOrder = async () => {
     throw new Error("Unauthorized");
   }
 
-  const cart = await db.query.cartTable.findFirst({
-    where: eq(cartTable.userId, session.user.id),
-    with: {
-      shippingAddress: true,
-      items: {
-        with: {
-          productVariant: true,
-        },
-      },
-    },
-  });
+  const cart = await getUserCart(session.user.id);
 
   let orderId: string | undefined;
 

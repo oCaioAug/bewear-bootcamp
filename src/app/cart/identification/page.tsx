@@ -1,11 +1,11 @@
-import { eq } from "drizzle-orm";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 
 import Footer from "@/components/common/footer";
 import Header from "@/components/common/header";
-import { db } from "@/db";
-import { shippingAddressTable } from "@/db/schema";
+import { getUserCart } from "@/data/cart/get";
+import { getUserShippingAddresses } from "@/data/shipping-address/get";
+import { calculateCartTotalInCents } from "@/helpers/cart";
 import { auth } from "@/lib/auth";
 
 import CartSummary from "../components/cart-summary";
@@ -20,30 +20,13 @@ const IdentificationPage = async () => {
     redirect("/");
   }
 
-  const cart = await db.query.cartTable.findFirst({
-    where: (cart, { eq }) => eq(cart.userId, session.user.id),
-    with: {
-      shippingAddress: true,
-      items: {
-        with: {
-          productVariant: {
-            with: {
-              product: true,
-            },
-          },
-        },
-      },
-    },
-  });
+  const cart = await getUserCart(session.user.id);
 
   if (!cart || cart.items.length === 0) {
     redirect("/");
   }
 
-  const shippingAddresses = await db.query.shippingAddressTable.findMany({
-    where: eq(shippingAddressTable.userId, session?.user.id || ""),
-    orderBy: (address, { desc }) => [desc(address.createdAt)],
-  });
+  const shippingAddresses = await getUserShippingAddresses(session.user.id);
 
   const cartTotalInCents = cart.items.reduce((total, item) => {
     return total + item.productVariant.priceInCents * item.quantity;

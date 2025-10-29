@@ -3,6 +3,7 @@
 import { eq } from "drizzle-orm";
 import { headers } from "next/headers";
 
+import { getCartItemById } from "@/data/cart/get";
 import { db } from "@/db";
 import { cartItemTable } from "@/db/schema";
 import { auth } from "@/lib/auth";
@@ -24,12 +25,7 @@ export const decreaseCartProductQuantity = async (
     throw new Error("Unauthorized");
   }
 
-  const cartItem = await db.query.cartItemTable.findFirst({
-    where: (cartItem, { eq }) => eq(cartItem.id, data.cartItemId),
-    with: {
-      cart: true,
-    },
-  });
+  const cartItem = await getCartItemById(data.cartItemId);
 
   if (!cartItem) {
     throw new Error("Product variant not found in cart.");

@@ -3,6 +3,8 @@
 import { eq } from "drizzle-orm";
 import { headers } from "next/headers";
 
+import { getUserCart } from "@/data/cart/get";
+import { getShippingAddressByIdAndUserId } from "@/data/shipping-address/get";
 import { db } from "@/db";
 import { cartTable } from "@/db/schema";
 import { auth } from "@/lib/auth";
@@ -25,22 +27,17 @@ export const updateCartShippingAddress = async (
     throw new Error("Unauthorized");
   }
 
-  const shippingAddress = await db.query.shippingAddressTable.findFirst({
-    where: (shippingAddress, { eq, and }) =>
-      and(
-        eq(shippingAddress.id, data.shippingAddressId),
-        eq(shippingAddress.userId, session.user.id),
-      ),
-  });
+  const shippingAddress = await getShippingAddressByIdAndUserId(
+    data.shippingAddressId,
+    session.user.id,
+  );
 
   if (!shippingAddress) {
     throw new Error("Shipping address not found or unauthorized");
   }
 
   // Buscar o carrinho do usuário
-  const cart = await db.query.cartTable.findFirst({
-    where: (cart, { eq }) => eq(cart.userId, session.user.id),
-  });
+  const cart = await getUserCart(session.user.id);
 
   if (!cart) {
     throw new Error("Carrinho não encontrado");

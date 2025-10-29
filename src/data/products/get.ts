@@ -38,3 +38,13 @@ export const getNewlyCreatedProducts = async () => {
   });
   return newlyCreatedProducts;
 };
+
+export const getProductsByCategoryId = async (categoryId: string) => {
+  const products = await db.query.productTable.findMany({
+    where: (product, { eq }) => eq(product.categoryId, categoryId),
+    with: {
+      variants: true,
+    },
+  });
+  return products;
+};

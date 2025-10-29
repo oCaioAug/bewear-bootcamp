@@ -2,8 +2,10 @@
 
 import { headers } from "next/headers";
 
+import { getUserCart } from "@/data/cart/get";
 import { db } from "@/db";
 import { cartTable } from "@/db/schema";
+import { calculateCartTotalInCents } from "@/helpers/cart";
 import { auth } from "@/lib/auth";
 
 export const getCart = async () => {
@@ -13,22 +15,8 @@ export const getCart = async () => {
   if (!session?.user) {
     throw new Error("Unauthorized");
   }
-  const cart = await db.query.cartTable.findFirst({
-    where: (cart, { eq }) => eq(cart.userId, session.user.id),
-    with: {
-      shippingAddress: true,
-      items: {
-        with: {
-          productVariant: {
-            with: {
-              product: true,
-            },
-          },
-        },
-      },
-    },
-  });
-  
+  const cart = await getUserCart(session.user.id);
+
   if (!cart) {
     const [newCart] = await db
       .insert(cartTable)
