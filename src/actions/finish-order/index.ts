@@ -36,9 +36,7 @@ export const finishOrder = async () => {
       throw new Error("Shipping address not found");
     }
 
-    const totalPriceInCents = cart.items.reduce((acc, item) => {
-      return acc + item.productVariant.priceInCents * item.quantity;
-    }, 0);
+    const totalPriceInCents = calculateCartTotalInCents(cart);
 
     const [order] = await tx
       .insert(orderTable)

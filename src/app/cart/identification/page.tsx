@@ -28,9 +28,7 @@ const IdentificationPage = async () => {
 
   const shippingAddresses = await getUserShippingAddresses(session.user.id);
 
-  const cartTotalInCents = cart.items.reduce((total, item) => {
-    return total + item.productVariant.priceInCents * item.quantity;
-  }, 0);
+  const cartTotalInCents = calculateCartTotalInCents(cart);
 
   return (
     <div>

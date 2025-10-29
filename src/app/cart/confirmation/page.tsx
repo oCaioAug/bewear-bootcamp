@@ -27,9 +27,7 @@ const ConfirmationPage = async () => {
     redirect("/");
   }
 
-  const cartTotalInCents = cart.items.reduce((total, item) => {
-    return total + item.productVariant.priceInCents * item.quantity;
-  }, 0);
+  const cartTotalInCents = calculateCartTotalInCents(cart);
 
   if (!cart.shippingAddress) {
     redirect("/cart/identification");
