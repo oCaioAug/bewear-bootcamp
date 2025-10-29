@@ -54,14 +54,14 @@ const Orders = ({ orders }: ordersProps) => {
                 </AccordionTrigger>
                 <AccordionContent>
                   <CartSummary
-                    subtotalInCents={order.totalPriceInCents / 100}
-                    totalInCents={order.totalPriceInCents / 100}
+                    subtotalInCents={order.totalPriceInCents}
+                    totalInCents={order.totalPriceInCents}
                     products={order.items.map((item) => ({
                       id: item.id,
                       name: item.productName,
                       variantName: item.productVariantName,
                       imageUrl: item.imageUrl,
-                      priceInCents: item.priceInCents / 100,
+                      priceInCents: item.priceInCents,
                       quantity: item.quantity,
                     }))}
                   />
