@@ -87,9 +87,6 @@ const CartItem = ({
             <p className="text-muted-foreground text-xs font-medium">
               {productVariantName}
             </p>
-            <p className="text-xs font-semibold">
-              {formatCentsToBRL(productVariantPriceInCents)}
-            </p>
 
             <div className="flex w-[100px] items-center justify-between rounded-lg border p-1">
               <Button
