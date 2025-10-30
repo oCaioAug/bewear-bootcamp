@@ -35,14 +35,14 @@ const Header = () => {
               <MenuIcon />
             </Button>
           </SheetTrigger>
-          <SheetContent>
-            <SheetHeader>
+          <SheetContent className="w-[330px] rounded-l-3xl">
+            <SheetHeader className="px-5">
               <SheetTitle>Menu</SheetTitle>
             </SheetHeader>
             <div className="px-5">
               {session?.user ? (
                 <>
-                  <div className="justify-betweeen flex space-y-6 space-x-2">
+                  <div className="justify-between flex space-y-6 space-x-2">
                     <div className="flex items-center gap-3">
                       <Avatar>
                         <AvatarImage
