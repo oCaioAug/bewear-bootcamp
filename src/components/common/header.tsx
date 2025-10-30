@@ -50,9 +50,10 @@ const Header = () => {
               {session?.user ? (
                 <div className="flex justify-between space-y-6 space-x-2">
                   <div className="flex items-center gap-3 mb-6">
-                    <Avatar>
+                    <Avatar className="h-12 w-12">
                       <AvatarImage
                         src={session?.user?.image as string | undefined}
+                        
                       />
                       <AvatarFallback>
                         {session?.user?.name?.split(" ")?.[0]?.[0]}
