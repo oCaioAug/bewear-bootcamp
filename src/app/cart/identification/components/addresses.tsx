@@ -177,7 +177,7 @@ const Addresses = ({
             <div className="mt-4">
               <Button
                 onClick={handleGoToPayment}
-                className="w-full"
+                className="w-full font-semibold p-5"
                 disabled={updateCartShippingAddressMutation.isPending}
               >
                 {updateCartShippingAddressMutation.isPending

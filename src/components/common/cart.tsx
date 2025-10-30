@@ -31,7 +31,7 @@ const Cart = () => {
         </Button>
       </SheetTrigger>
 
-      <SheetContent className="w-[330px] rounded-l-3xl">
+      <SheetContent className="w-[330px] rounded-l-3xl lg:w-[600px] lg:m-5 lg:h-auto lg:rounded-3xl">
         <SheetHeader>
           <SheetTitle>
             <ShoppingBag className="mr-2 mb-1 inline" color="#656565" />

@@ -53,7 +53,7 @@ const Header = () => {
               <MenuIcon />
             </Button>
           </SheetTrigger>
-          <SheetContent className="w-[330px] rounded-l-3xl">
+          <SheetContent className="w-[330px] rounded-l-3xl lg:w-[600px] lg:m-5 lg:h-auto lg:rounded-3xl">
             <SheetHeader className="px-5">
               <SheetTitle>Menu</SheetTitle>
             </SheetHeader>
@@ -66,7 +66,7 @@ const Header = () => {
                         src={session?.user?.image as string | undefined}
                         
                       />
-                      <AvatarFallback>
+                      <AvatarFallback className="font-semibold">
                         {session?.user?.name?.split(" ")?.[0]?.[0]}
                         {session?.user?.name?.split(" ")?.[1]?.[0]}
                       </AvatarFallback>

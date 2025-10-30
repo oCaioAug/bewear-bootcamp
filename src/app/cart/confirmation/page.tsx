@@ -36,8 +36,8 @@ const ConfirmationPage = async () => {
   return (
     <div>
       <Header />
-      <div className="space-y-4 px-5">
-        <Card>
+      <div className="space-y-4 px-5 lg:flex lg:justify-between lg:gap-6 ">
+        <Card className="lg:h-full lg:w-4/7 lg:p-8">
           <CardHeader>
             <CardTitle>Identificação</CardTitle>
           </CardHeader>
@@ -51,21 +51,23 @@ const ConfirmationPage = async () => {
           </CardContent>
         </Card>
 
-        <CartSummary
-          subtotalInCents={cartTotalInCents}
-          totalInCents={cartTotalInCents}
-          products={cart.items.map((item) => ({
-            id: item.productVariant.id,
-            name: item.productVariant.product.name,
-            variantName: item.productVariant.name,
-            quantity: item.quantity,
-            priceInCents: item.productVariant.priceInCents,
-            imageUrl: item.productVariant.imageUrl,
-          }))}
-        />
+        <div className="lg:w-3/7">
+          <CartSummary
+            subtotalInCents={cartTotalInCents}
+            totalInCents={cartTotalInCents}
+            products={cart.items.map((item) => ({
+              id: item.productVariant.id,
+              name: item.productVariant.product.name,
+              variantName: item.productVariant.name,
+              quantity: item.quantity,
+              priceInCents: item.productVariant.priceInCents,
+              imageUrl: item.productVariant.imageUrl,
+            }))}
+          />
+        </div>
       </div>
 
-      <div className="mt-12">
+      <div className="mt-12 absolute bottom-0 w-full">
         <Footer />
       </div>
     </div>
