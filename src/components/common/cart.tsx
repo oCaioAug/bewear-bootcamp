@@ -1,6 +1,6 @@
 "use client";
 
-import { ShoppingBasketIcon } from "lucide-react";
+import { ShoppingBag } from "lucide-react";
 import Link from "next/link";
 
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -17,46 +17,55 @@ import {
   SheetTrigger,
 } from "../ui/sheet";
 import CartItem from "./cart-item";
+import CartBottomSkeleton from "./skeleton/cart-bottom-skeleton";
+import CartItemSkeleton from "./skeleton/cart-item-skeleton";
 
 const Cart = () => {
-  const { data: cart} = useCart();
+  const { data: cart, isPending } = useCart();
 
   return (
     <Sheet>
       <SheetTrigger asChild>
         <Button variant="outline" size="icon">
-          <ShoppingBasketIcon />
+          <ShoppingBag color="#656565" />
         </Button>
       </SheetTrigger>
 
-      <SheetContent>
+      <SheetContent className="w-[330px] rounded-l-3xl">
         <SheetHeader>
-          <SheetTitle>Seu Carrinho</SheetTitle>
+          <SheetTitle>
+            <ShoppingBag className="mr-2 mb-1 inline" color="#656565" />
+            Meu Carrinho
+          </SheetTitle>
         </SheetHeader>
 
         <div className="flex h-full flex-col px-5 pb-5">
           <div className="flex h-full max-h-full flex-col overflow-hidden">
             <ScrollArea className="h-full w-full">
               <div className="flex h-full flex-col gap-8">
-                {cart?.items.map((item) => (
-                  <CartItem
-                    key={item.id}
-                    id={item.id}
-                    productVariantId={item.productVariant.id}
-                    productName={item.productVariant.product.name}
-                    productVariantName={item.productVariant.name}
-                    productVariantImageUrl={item.productVariant.imageUrl}
-                    productVariantPriceInCents={
-                      item.productVariant.priceInCents
-                    }
-                    quantity={item.quantity}
-                  />
-                ))}
+                {isPending
+                  ? Array.from({ length: 3 }).map((_, index) => (
+                      <CartItemSkeleton key={index} />
+                    ))
+                  : cart?.items.map((item) => (
+                      <CartItem
+                        key={item.id}
+                        id={item.id}
+                        productVariantId={item.productVariant.id}
+                        productName={item.productVariant.product.name}
+                        productVariantName={item.productVariant.name}
+                        productVariantImageUrl={item.productVariant.imageUrl}
+                        productVariantPriceInCents={
+                          item.productVariant.priceInCents
+                        }
+                        quantity={item.quantity}
+                      />
+                    ))}
               </div>
             </ScrollArea>
           </div>
 
-          {cart?.items && cart?.items.length > 0 && (
+          {!isPending && cart?.items && cart?.items.length > 0 ? (
             <div className="flex flex-col gap-4">
               <Separator />
 
@@ -83,6 +92,8 @@ const Cart = () => {
                 <Link href="/cart/identification">Finalizar Compra</Link>
               </Button>
             </div>
+          ) : (
+            <CartBottomSkeleton />
           )}
         </div>
       </SheetContent>
