@@ -1,54 +1,40 @@
 "use client";
 
-import { loadStripe } from "@stripe/stripe-js";
 import { Loader2 } from "lucide-react";
+import { toast } from "sonner";
 
-import { createCheckoutSession } from "@/actions/create-checkout-session";
 import { Button } from "@/components/ui/button";
+import { useCreateCheckoutSession } from "@/hooks/mutations/use-create-checkout-session";
 import { useFinishOrder } from "@/hooks/mutations/use-finish-order";
 
 const FinishOrderButton = () => {
   const finishOrderMutation = useFinishOrder();
+  const createCheckoutSessionMutation = useCreateCheckoutSession();
+
   const handleFinishOrder = async () => {
-    if (!process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY) {
-      throw new Error("Stripe publishable key is not defined");
-    }
-
-    const { orderId } = await finishOrderMutation.mutateAsync();
-    const checkoutSession = await createCheckoutSession({
-      orderId,
-    });
-    const stripe = await loadStripe(
-      process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY,
-    );
-
-    if (!stripe) {
-      throw new Error("Stripe.js failed to load");
-    }
-
-    const { error } = await stripe.redirectToCheckout({
-      sessionId: checkoutSession.id,
-    });
-
-    if (error) {
-      throw new Error(error.message);
+    try {
+      const { orderId } = await finishOrderMutation.mutateAsync();
+      await createCheckoutSessionMutation.mutateAsync({ orderId });
+    } catch (error) {
+      toast.error("Erro ao processar pagamento. Tente novamente.");
+      console.error("Checkout error:", error);
     }
   };
 
+  const isLoading = finishOrderMutation.isPending || createCheckoutSessionMutation.isPending;
+
   return (
-    <>
-      <Button
-        className="w-full rounded-full"
-        size="lg"
-        onClick={handleFinishOrder}
-        disabled={finishOrderMutation.isPending}
-      >
-        {finishOrderMutation.isPending && (
-          <Loader2 className="h-4 w-4 animate-spin" />
-        )}
-        Finalizar compra
-      </Button>
-    </>
+    <Button
+      className="w-full rounded-full"
+      size="lg"
+      onClick={handleFinishOrder}
+      disabled={isLoading}
+    >
+      {isLoading && (
+        <Loader2 className="h-4 w-4 animate-spin" />
+      )}
+      Finalizar compra
+    </Button>
   );
 };
 

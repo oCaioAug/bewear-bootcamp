@@ -1,6 +1,7 @@
 "use server";
 
 import { headers } from "next/headers";
+import { redirect } from "next/navigation";
 import Stripe from "stripe";
 
 import { getOrderById, getOrderItems } from "@/data/orders/get";
@@ -50,12 +51,16 @@ export const createCheckoutSession = async (
             description: orderItem.productVariant.product.description,
             images: [orderItem.productVariant.imageUrl],
           },
-          // Em centavos
           unit_amount: orderItem.priceInCents,
         },
         quantity: orderItem.quantity,
       };
     }),
   });
-  return checkoutSession;
+
+  if (!checkoutSession.url) {
+    throw new Error("Erro ao criar sessão de checkout");
+  }
+
+  redirect(checkoutSession.url);
 };
