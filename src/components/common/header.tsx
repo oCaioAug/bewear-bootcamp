@@ -6,6 +6,7 @@ import {
   LogOutIcon,
   MenuIcon,
   TruckIcon,
+  User,
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -28,9 +29,19 @@ const Header = () => {
   const { data: session } = authClient.useSession();
 
   return (
-    <header className="item-center flex justify-between p-5">
+    <header className="item-center flex justify-between p-5 lg:px-20 lg:py-8">
+      <div className="hidden lg:flex lg:justify-between lg:gap-2">
+        <User />
+        <span className="font-semibold">Olá, {session?.user?.name ?? "Visitante, faça seu login"}</span>
+      </div>
       <Link href="/">
-        <Image src="/logo.svg" alt="BEWEAR" width={100} height={26.14} />
+        <Image 
+          src="/logo.svg" 
+          alt="BEWEAR" 
+          width={100} 
+          height={26.14} 
+          className="lg:w-32 lg:h-auto"
+        />
       </Link>
 
       <div className="item-center flex gap-4">
