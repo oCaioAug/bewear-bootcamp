@@ -11,5 +11,11 @@ export const useCart = (params?: {
     queryKey: getUseCartQueryKey(),
     queryFn: () => getCart(),
     initialData: params?.initialData,
+    retry: (failureCount) => {
+      if (failureCount < 3) {
+        return true;
+      }
+      return false;
+    },
   });
 };

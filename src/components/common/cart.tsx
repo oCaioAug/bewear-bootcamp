@@ -1,6 +1,6 @@
 "use client";
 
-import { ShoppingBag, ShoppingCartIcon } from "lucide-react";
+import { LogInIcon, ShoppingBag, ShoppingCartIcon } from "lucide-react";
 import Link from "next/link";
 
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -22,6 +22,8 @@ import CartItemSkeleton from "./skeleton/cart-item-skeleton";
 
 const Cart = () => {
   const { data: cart, isPending } = useCart();
+
+  const isUserNotLoggedIn = !isPending && cart === null;
 
   return (
     <Sheet>
@@ -47,67 +49,93 @@ const Cart = () => {
                   ? Array.from({ length: 3 }).map((_, index) => (
                       <CartItemSkeleton key={index} />
                     ))
-                  : cart?.items.map((item) => (
-                      <CartItem
-                        key={item.id}
-                        id={item.id}
-                        productVariantId={item.productVariant.id}
-                        productName={item.productVariant.product.name}
-                        productVariantName={item.productVariant.name}
-                        productVariantImageUrl={item.productVariant.imageUrl}
-                        productVariantPriceInCents={
-                          item.productVariant.priceInCents
-                        }
-                        quantity={item.quantity}
-                      />
-                    ))}
+                  : isUserNotLoggedIn
+                    ? null
+                    : cart?.items.map((item) => (
+                        <CartItem
+                          key={item.id}
+                          id={item.id}
+                          productVariantId={item.productVariant.id}
+                          productName={item.productVariant.product.name}
+                          productVariantName={item.productVariant.name}
+                          productVariantImageUrl={item.productVariant.imageUrl}
+                          productVariantPriceInCents={
+                            item.productVariant.priceInCents
+                          }
+                          quantity={item.quantity}
+                        />
+                      ))}
               </div>
 
-              {!isPending && cart?.items && cart?.items.length <= 0 && (
+              {isUserNotLoggedIn && (
                 <div className="absolute flex h-full max-h-full w-full flex-col items-center justify-center gap-4 pb-6">
-                  <ShoppingCartIcon strokeWidth={1} size={128} />
-                  <div className="flex flex-col gap-2 items-center justify-center">
+                  <LogInIcon strokeWidth={1} size={128} />
+                  <div className="flex flex-col items-center justify-center gap-2">
                     <h3 className="text-xl font-semibold">
-                      Seu carrinho está vazio
+                      Faça login para ver seu carrinho
                     </h3>
-                    <p className="text-muted-foreground text-sm ">
-                      Os produtos que você deseja estão te esperando!
+                    <p className="text-muted-foreground text-center text-sm">
+                      Entre na sua conta para visualizar os produtos salvos no
+                      seu carrinho
                     </p>
+                    <Button className="mt-4 rounded-full" asChild>
+                      <Link href="/authentication">Fazer Login</Link>
+                    </Button>
                   </div>
                 </div>
               )}
+
+              {!isPending &&
+                !isUserNotLoggedIn &&
+                cart?.items &&
+                cart?.items.length <= 0 && (
+                  <div className="absolute flex h-full max-h-full w-full flex-col items-center justify-center gap-4 pb-6">
+                    <ShoppingCartIcon strokeWidth={1} size={128} />
+                    <div className="flex flex-col items-center justify-center gap-2">
+                      <h3 className="text-xl font-semibold">
+                        Seu carrinho está vazio
+                      </h3>
+                      <p className="text-muted-foreground text-sm">
+                        Os produtos que você deseja estão te esperando!
+                      </p>
+                    </div>
+                  </div>
+                )}
             </ScrollArea>
           </div>
 
-          {!isPending && cart?.items && cart?.items.length > 0 && (
-            <div className="flex flex-col gap-4">
-              <Separator />
+          {!isPending &&
+            !isUserNotLoggedIn &&
+            cart?.items &&
+            cart?.items.length > 0 && (
+              <div className="flex flex-col gap-4">
+                <Separator />
 
-              <div className="flex items-center justify-between text-xs font-medium">
-                <p>Subtotal:</p>
-                <p>{formatCentsToBRL(cart?.totalPriceInCents ?? 0)}</p>
+                <div className="flex items-center justify-between text-xs font-medium">
+                  <p>Subtotal:</p>
+                  <p>{formatCentsToBRL(cart?.totalPriceInCents ?? 0)}</p>
+                </div>
+
+                <Separator />
+
+                <div className="flex items-center justify-between text-xs font-medium">
+                  <p>Entrega:</p>
+                  <p>Grátis</p>
+                </div>
+
+                <Separator />
+
+                <div className="flex items-center justify-between text-xs font-medium">
+                  <p>Total:</p>
+                  <p>{formatCentsToBRL(cart?.totalPriceInCents ?? 0)}</p>
+                </div>
+
+                <Button className="mt-5 rounded-full" size="lg" asChild>
+                  <Link href="/cart/identification">Finalizar Compra</Link>
+                </Button>
               </div>
-
-              <Separator />
-
-              <div className="flex items-center justify-between text-xs font-medium">
-                <p>Entrega:</p>
-                <p>Grátis</p>
-              </div>
-
-              <Separator />
-
-              <div className="flex items-center justify-between text-xs font-medium">
-                <p>Total:</p>
-                <p>{formatCentsToBRL(cart?.totalPriceInCents ?? 0)}</p>
-              </div>
-
-              <Button className="mt-5 rounded-full" size="lg" asChild>
-                <Link href="/cart/identification">Finalizar Compra</Link>
-              </Button>
-            </div>
-          )}
-          {isPending && <CartBottomSkeleton />}
+            )}
+          {isPending && !isUserNotLoggedIn && <CartBottomSkeleton />}
         </div>
       </SheetContent>
     </Sheet>

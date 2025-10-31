@@ -12,9 +12,11 @@ export const getCart = async () => {
   const session = await auth.api.getSession({
     headers: await headers(),
   });
+
   if (!session?.user) {
-    throw new Error("Unauthorized");
+    return null;
   }
+
   const cart = await getUserCart(session.user.id);
 
   if (!cart) {
