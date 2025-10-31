@@ -31,45 +31,65 @@ const ProductVariantPage = async ({ params }: ProductVariantPageProps) => {
     <>
       <Header />
 
-      <div className="flex flex-col space-y-6">
+      <div className="flex flex-col space-y-6 lg:px-5">
         {/* Image */}
         {/* <div className="h-[380px] relative w-full rounded-3xl">
           <Image src={productVariant.imageUrl} alt={productVariant.name} fill  className="object-cover"/>
         </div> */}
-        <Image
-          src={productVariant.imageUrl}
-          alt={productVariant.name}
-          sizes="100vw"
-          width={0}
-          height={0}
-          className="h-auto w-full rounded-3xl object-cover"
-        />
-
-        <div className="px-5">
-          {/* Variantes */}
-          <VariantSelector
-            selectedVariantSlug={productVariant.slug}
-            variants={productVariant.product.variants}
+        <div className="space-y-6 lg:flex lg:gap-4 lg:px-5 lg:justify-between">
+          <div className="px-5 lg:px-0 lg:w-4/7">
+            <Image
+            src={productVariant.imageUrl}
+            alt={productVariant.name}
+            sizes="100vw"
+            width={0}
+            height={0}
+            className="h-full w-full rounded-3xl lg:w-auto"
           />
-        </div>
+          </div>
+          <div className=" lg:flex lg:w-full lg:flex-col lg:space-y-6">
+            <div className="px-5 lg:hidden">
+              {/* Variantes */}
+              <VariantSelector
+                selectedVariantSlug={productVariant.slug}
+                variants={productVariant.product.variants}
+              />
+            </div>
 
-        <div className="px-5">
-          {/* Descricao */}
-          <h2 className="text-lg font-semibold">
-            {productVariant.product.name}
-          </h2>
-          <h3 className="text-muted-foreground text-sm">
-            {productVariant.name}
-          </h3>
-          <h3 className="text-lg font-semibold">
-            {formatCentsToBRL(productVariant.priceInCents)}
-          </h3>
-        </div>
+            <div className="space-y-6 lg:flex lg:h-full lg:flex-col">
+              <div className="px-5 lg:flex lg:flex-col lg:space-y-6">
+                {/* Descricao */}
+                <div className="">
+                  <h2 className="text-lg font-semibold lg:text-4xl">
+                    {productVariant.product.name}
+                  </h2>
+                  <h3 className="text-muted-foreground text-sm lg:text-lg">
+                    {productVariant.name}
+                  </h3>
+                </div>
 
-        <ProductActions productVariantId={productVariant.id} />
+                <h3 className="text-lg font-semibold  lg:text-2xl">
+                  {formatCentsToBRL(productVariant.priceInCents)}
+                </h3>
 
-        <div className="px-5">
-          <p className="text-sm">{productVariant.product.description}</p>
+                <div className="hidden lg:flex ">
+                  {/* Variantes */}
+                  <VariantSelector
+                    selectedVariantSlug={productVariant.slug}
+                    variants={productVariant.product.variants}
+                  />
+                </div>
+              </div>
+
+              <div className=" lg:px-5">
+                <ProductActions productVariantId={productVariant.id} />
+              </div>
+
+              <div className="px-5">
+                <p className="text-sm">{productVariant.product.description}</p>
+              </div>
+            </div>
+          </div>
         </div>
 
         <ProductList title="Talvez você goste" products={likelyProducts} />

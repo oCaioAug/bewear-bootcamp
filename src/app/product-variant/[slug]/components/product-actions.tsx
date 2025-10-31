@@ -23,11 +23,11 @@ const ProductActions = ({ productVariantId }: ProductActionsProps) => {
   };
 
   return (
-    <>
-      <div className="px-5">
+    <div className="lg:flex lg:flex-col lg:w-full space-y-4">
+      <div className="px-5 lg:px-0">
         <div className="space-y-4">
           <h3 className="font-medium">Quantidade</h3>
-          <div className="flex w-[100px] items-center justify-between rounded-lg border">
+          <div className="flex w-[100px] lg:w-[150px] lg:px-3 lg:py-1 items-center justify-between rounded-lg border">
             <Button size="icon" variant="ghost" onClick={handleDecrement}>
               <MinusIcon />
             </Button>
@@ -38,16 +38,16 @@ const ProductActions = ({ productVariantId }: ProductActionsProps) => {
           </div>
         </div>
       </div>
-      <div className="flex flex-col space-y-4 px-5">
+      <div className="flex flex-col lg:flex-row lg:w-auto space-y-4 px-5 lg:px-0 lg:gap-6 ">
         <AddToCartButton
           productVariantId={productVariantId}
           quantity={quantity}
         />
-        <Button className="rounded-full" size="lg">
+        <Button className="rounded-full lg:w-1/2 font-semibold p-5" size="lg">
           Comprar agora
         </Button>
       </div>
-    </>
+    </div>
   );
 };
 

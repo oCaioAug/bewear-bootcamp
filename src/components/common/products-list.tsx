@@ -16,7 +16,7 @@ interface ProductListProps {
 
 const ProductList = ({ title, products }: ProductListProps) => {
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 lg:py-4">
       {/* Header com título e link "Ver todos" */}
       <div className="flex items-center justify-between px-5">
         <h2 className="font-semibold lg:text-xl">{title}</h2>
