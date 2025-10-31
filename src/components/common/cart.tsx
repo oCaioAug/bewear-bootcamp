@@ -1,6 +1,6 @@
 "use client";
 
-import { ShoppingBag } from "lucide-react";
+import { ShoppingBag, ShoppingCartIcon } from "lucide-react";
 import Link from "next/link";
 
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -31,7 +31,7 @@ const Cart = () => {
         </Button>
       </SheetTrigger>
 
-      <SheetContent className="w-[330px] rounded-l-3xl lg:w-[600px] lg:m-5 lg:h-auto lg:rounded-3xl">
+      <SheetContent className="w-[330px] rounded-l-3xl lg:m-5 lg:h-auto lg:w-[600px] lg:rounded-3xl">
         <SheetHeader>
           <SheetTitle>
             <ShoppingBag className="mr-2 mb-1 inline" color="#656565" />
@@ -62,10 +62,24 @@ const Cart = () => {
                       />
                     ))}
               </div>
+
+              {!isPending && cart?.items && cart?.items.length <= 0 && (
+                <div className="absolute flex h-full max-h-full w-full flex-col items-center justify-center gap-4 pb-6">
+                  <ShoppingCartIcon strokeWidth={1} size={128} />
+                  <div className="flex flex-col gap-2 items-center justify-center">
+                    <h3 className="text-xl font-semibold">
+                      Seu carrinho está vazio
+                    </h3>
+                    <p className="text-muted-foreground text-sm ">
+                      Os produtos que você deseja estão te esperando!
+                    </p>
+                  </div>
+                </div>
+              )}
             </ScrollArea>
           </div>
 
-          {!isPending && cart?.items && cart?.items.length > 0 ? (
+          {!isPending && cart?.items && cart?.items.length > 0 && (
             <div className="flex flex-col gap-4">
               <Separator />
 
@@ -92,9 +106,8 @@ const Cart = () => {
                 <Link href="/cart/identification">Finalizar Compra</Link>
               </Button>
             </div>
-          ) : (
-            <CartBottomSkeleton />
           )}
+          {isPending && <CartBottomSkeleton />}
         </div>
       </SheetContent>
     </Sheet>
