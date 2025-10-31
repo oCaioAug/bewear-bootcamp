@@ -1,3 +1,4 @@
+import Footer from "@/components/common/footer";
 import Header from "@/components/common/header";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
@@ -8,8 +9,8 @@ const Authentication = () => {
   return (
     <>
       <Header />
-      <div className="flex w-full flex-col gap-6 p-5">
-        <Tabs defaultValue="sign-in">
+      <div className="flex w-full flex-col gap-6 p-5 lg:items-center lg:justify-center">
+        <Tabs defaultValue="sign-in" className="lg:h-full lg:w-2/6">
           <TabsList>
             <TabsTrigger value="sign-in">Entrar</TabsTrigger>
             <TabsTrigger value="sign-up">Criar Conta</TabsTrigger>
@@ -21,6 +22,10 @@ const Authentication = () => {
             <SignUpForm />
           </TabsContent>
         </Tabs>
+      </div>
+
+      <div className="mt-12 absolute bottom-0 w-full">
+        <Footer />
       </div>
     </>
   );
